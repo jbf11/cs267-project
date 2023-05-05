@@ -1,0 +1,63 @@
+cc -fPIC -g -O0  -I/global/u2/j/jbfern/cs267-project/petsc/include -I/global/u2/j/jbfern/cs267-project/petsc/arch-linux-c-debug/include      fixed-flux.c  -Wl,-rpath,/global/u2/j/jbfern/cs267-project/petsc/arch-linux-c-debug/lib -L/global/u2/j/jbfern/cs267-project/petsc/arch-linux-c-debug/lib -Wl,-rpath,/global/u2/j/jbfern/cs267-project/petsc/arch-linux-c-debug/lib -L/global/u2/j/jbfern/cs267-project/petsc/arch-linux-c-debug/lib -Wl,-rpath,/opt/cray/pe/libsci/20.09.1/INTEL/16.0/x86_64/lib -L/opt/cray/pe/libsci/20.09.1/INTEL/16.0/x86_64/lib -Wl,-rpath,/opt/cray/dmapp/default/lib64 -L/opt/cray/dmapp/default/lib64 -Wl,-rpath,/opt/cray/pe/mpt/7.7.19/gni/mpich-intel/16.0/lib -L/opt/cray/pe/mpt/7.7.19/gni/mpich-intel/16.0/lib -Wl,-rpath,/opt/cray/rca/2.2.20-7.0.3.1_3.48__g8e3fb5b.ari/lib64 -L/opt/cray/rca/2.2.20-7.0.3.1_3.48__g8e3fb5b.ari/lib64 -Wl,-rpath,/global/common/software/nersc/cori-2022q1/sw/darshan/3.4.0/lib -L/global/common/software/nersc/cori-2022q1/sw/darshan/3.4.0/lib -Wl,-rpath,/opt/cray/pe/atp/3.14.9/lib -L/opt/cray/pe/atp/3.14.9/lib -Wl,-rpath,/opt/intel/compilers_and_libraries_2020.2.254/linux/compiler/lib/intel64 -L/opt/intel/compilers_and_libraries_2020.2.254/linux/compiler/lib/intel64 -Wl,-rpath,/opt/intel/compilers_and_libraries_2020.2.254/linux/mkl/lib/intel64 -L/opt/intel/compilers_and_libraries_2020.2.254/linux/mkl/lib/intel64 -Wl,-rpath,/opt/intel/compilers_and_libraries_2020.2.254/linux/compiler/lib/intel64_lin -L/opt/intel/compilers_and_libraries_2020.2.254/linux/compiler/lib/intel64_lin -Wl,-rpath,/usr/lib64/gcc/x86_64-suse-linux/7 -L/usr/lib64/gcc/x86_64-suse-linux/7 -Wl,-rpath,/usr/x86_64-suse-linux/lib -L/usr/x86_64-suse-linux/lib -lpetsc -ldmumps -lmumps_common -lpord -lpthread -lscalapack -lsuperlu -lsuperlu_dist -lparmetis -lmetis -lX11 -lAtpSigHandler -lrca -ldarshan -llustreapi -lz -lhugetlbfs -lmpich_intel -lmpichcxx_intel -lsci_intel_mpi -lsci_intel -lstdc++ -limf -lm -lifcoremt -lifport -lpthread -lsvml -lirng -lipgo -ldecimal -lcilkrts -lgcc_s -lirc -lirc_s -ldl -lquadmath -o fixed-flux
+fixed-flux.c(73): error #140: too many arguments in function call
+    PetscCall(MatSetSizes(J, nloc, nloc, 2 * m * n, 2 * m * n, 7, NULL, 3, NULL));
+    ^
+
+fixed-flux.c(78): error #140: too many arguments in function call
+    PetscCall(MatSetSizes(K, nloc, nloc, 2 * m * n, 2 * m * n, 7, NULL, 3, NULL));
+    ^
+
+fixed-flux.c(83): error #140: too many arguments in function call
+    PetscCall(MatSetSizes(M, nloc, nloc, 2 * m * n, 2 * m * n, 7, NULL, 3, NULL));
+    ^
+
+fixed-flux.c(303): warning #167: argument of type "Mat" is incompatible with parameter of type "Mat *"
+        PetscCall(MatDuplicate(K, MAT_COPY_VALUES, J));
+        ^
+
+fixed-flux.c(307): warning #266: function "PetscMPICall" declared implicitly
+          PetscMPICall(MPI_Irecv(r_ghsts, n, MPI_DOUBLE, rank+1, 1, PETSC_COMM_WORLD, &rqs));
+          ^
+
+fixed-flux.c(307): error: identifier "r_ghsts" is undefined
+          PetscMPICall(MPI_Irecv(r_ghsts, n, MPI_DOUBLE, rank+1, 1, PETSC_COMM_WORLD, &rqs));
+                       ^
+
+fixed-flux.c(307): warning #167: argument of type "MPI_Status *" is incompatible with parameter of type "MPI_Request={int} *"
+          PetscMPICall(MPI_Irecv(r_ghsts, n, MPI_DOUBLE, rank+1, 1, PETSC_COMM_WORLD, &rqs));
+                       ^
+
+fixed-flux.c(311): warning #266: function "PetscMPICall" declared implicitly
+            PetscMPICall(MPI_Wait(&sqs, MPI_STATUS_IGNORE));
+            ^
+
+fixed-flux.c(311): warning #167: argument of type "MPI_Status *" is incompatible with parameter of type "MPI_Request={int} *"
+            PetscMPICall(MPI_Wait(&sqs, MPI_STATUS_IGNORE));
+                         ^
+
+fixed-flux.c(313): warning #266: function "PetscMPICall" declared implicitly
+          PetscMPICall(MPI_Isend(myvals + nloc - n, n, MPI_DOUBLE, rank-1, 1, PETSC_COMM_WORLD, &sqs));
+          ^
+
+fixed-flux.c(313): warning #167: argument of type "MPI_Status *" is incompatible with parameter of type "MPI_Request={int} *"
+          PetscMPICall(MPI_Isend(myvals + nloc - n, n, MPI_DOUBLE, rank-1, 1, PETSC_COMM_WORLD, &sqs));
+                       ^
+
+fixed-flux.c(364): warning #266: function "PetscMPICall" declared implicitly
+          PetscMPICall(MPI_Wait(&rqs, MPI_STATUS_IGNORE));
+          ^
+
+fixed-flux.c(364): warning #167: argument of type "MPI_Status *" is incompatible with parameter of type "MPI_Request={int} *"
+          PetscMPICall(MPI_Wait(&rqs, MPI_STATUS_IGNORE));
+                       ^
+
+fixed-flux.c(434): warning #266: function "PetscMPICall" declared implicitly
+      PetscMPICall(MPI_Wait(&sqs, MPI_STATUS_IGNORE));
+      ^
+
+fixed-flux.c(434): warning #167: argument of type "MPI_Status *" is incompatible with parameter of type "MPI_Request={int} *"
+      PetscMPICall(MPI_Wait(&sqs, MPI_STATUS_IGNORE));
+                   ^
+
+compilation aborted for fixed-flux.c (code 2)
+make: *** [<builtin>: fixed-flux] Error 2
