@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -A mp309
-#SBATCH -N 1
+#SBATCH -N 32
 #SBATCH -C haswell
 #SBATCH -q debug
 #SBATCH -J fenicsx
-#SBATCH --ntasks-per-node=02
+#SBATCH --ntasks-per-node=32
 #SBATCH -t 00:30:00
 
 #OpenMP settings:
@@ -13,4 +13,4 @@
 #export OMP_PROC_BIND=spread
 
 #run the application:
-srun -n 02 python fix-fenicsx.py > bm-10-160-160-01-02-superlu.out
+srun -n 1024 python fix-fenicsx.py > bm-010-5120-5120-32-32-fenicsx.out

@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH -A mp309
-#SBATCH -N 2
+#SBATCH -N 01
 #SBATCH -C haswell
 #SBATCH -q debug
 #SBATCH -J fix
@@ -13,4 +13,4 @@
 # export OMP_PROC_BIND=spread
 
 #run the application:
-srun -n 64 ./fix-flux -nt 10 -n 160 -m 160
+srun -n 32 ./fix-flux -nt 10 -n 1024 -m 1024 > bm-010-1024-1024-01-32-fix.out

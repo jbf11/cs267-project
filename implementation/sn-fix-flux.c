@@ -16,8 +16,8 @@ int main(int argc, char **args)
   Mat         J, K, M;
   KSP         ksp; /* linear solver context */
   PC          pc;
-  PetscReal   c0 = 1.0, inp = 0.1, Lx = 20.0, Ly = 20.0, W = 12.0, h, k, x0;
-  PetscReal   dt, kap = 3.0, norm, tol = 1e-12;
+  PetscReal   c0 = 1.0, inp = 0.1, flx = 0.15, Lx = 20.0, Ly = 20.0, W = 12.0, h, k, x0;
+  PetscReal   dt, norm, tol = 1e-12;
   PetscInt    nt = 1, sind, find, n_wall, pos, iter, max_iter = 10, lr;
   PetscInt    i, j, t, Ii, m = 16, n = 16, ncol, nloc;
   PetscBool   flg = PETSC_FALSE, flg_ilu = PETSC_FALSE, verbose = PETSC_FALSE;
@@ -27,8 +27,9 @@ int main(int argc, char **args)
 #if defined(PETSC_HAVE_SUPERLU) || defined(PETSC_HAVE_SUPERLU_DIST)
   PetscBool flg_superlu = PETSC_FALSE;
 #endif
-  PetscReal vals[16], grads[3], prods[9], coefs[6], locs[3], sum, *r_ghst = NULL, *f_vals = NULL, *myvals = NULL;
-  PetscInt  inds[4], *f_rows = NULL;
+  PetscReal vals[16], grads[3], prods[9], coefs[6], locs[3], sum;
+  PetscReal *r_ghst = NULL, *f_vals = NULL, *b_vals = NULL, *myvals = NULL;
+  PetscInt  inds[4], *f_rows = NULL, *b_rows = NULL;
   PetscMPIInt rank, size;
 #if defined(PETSC_USE_LOG)
   PetscLogStage stage;
@@ -51,23 +52,30 @@ int main(int argc, char **args)
   h = Lx / (m-1);
   k = Ly / (n-1);
   n_wall = (PetscInt) ((1.0 - W/Ly)*(n-1)/2);
-  nloc = 2 * m * n / size;
-  ncol = 2 * m / size;
-  pos = (rank+1) % (size/2);
-  lr  = rank < size/2;
-  if (pos) {
-    r_ghst = (PetscReal*) malloc( n * sizeof(PetscReal));
+  nloc = 2 * m * n;
+  ncol = 2 * m;
+  f_rows = (PetscInt*)  malloc( ncol * sizeof(PetscInt));
+  f_vals = (PetscReal*) malloc( ncol * sizeof(PetscReal));
+  for (i = 0; i < ncol; ++i) {
+    f_rows[i] = n*i;
+    f_vals[i] = -h*inp;
   }
-  if (lr) {
-    f_rows = (PetscInt*)  malloc( ncol * sizeof(PetscInt));
-    f_vals = (PetscReal*) malloc( ncol * sizeof(PetscReal));
-    for (i = 0; i < ncol; ++i) {
-      f_rows[i] = n*(rank*ncol + i);
-      f_vals[i] = -h*inp;
-    }
-    if (rank == 0) f_vals[0] = -0.5*h*inp;
-    if (rank == size/2 - 1)  f_vals[ncol-1] = -0.5*h*inp;
+  f_vals[0] = 0.5*f_vals[0];
+  f_vals[ncol-1] = 0.5*f_vals[ncol-1];
+  b_rows = (PetscInt*) malloc( 2*(n-2*n_wall) * sizeof(PetscInt));
+  b_vals = (PetscReal*) malloc( 2*(n-2*n_wall) * sizeof(PetscReal));
+  for (i = 0; i < n - 2*n_wall; ++i) {
+    b_rows[i] = (m-1)*n + n_wall + i;
+    b_vals[i] = k * flx;
   }
+  b_vals[0] = 0.5*b_vals[0];
+  b_vals[n-2*n_wall-1] = 0.5*b_vals[n-2*n_wall-1];
+  for (i = 0; i < n - 2*n_wall; ++i) {
+    b_rows[i + n-2*n_wall] = m*n + n_wall + i;
+    b_vals[i + n-2*n_wall] = - k * flx;
+  }
+  b_vals[n-2*n_wall] = 0.5*b_vals[n-2*n_wall];
+  b_vals[2*(n-2*n_wall)-1] = 0.5*b_vals[2*(n-2*n_wall)-1];
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
          Compute the matrix and right-hand-side vector that define
@@ -116,57 +124,50 @@ int main(int argc, char **args)
   coefs[3] = -0.6*h*h/Lx/Lx;     coefs[4] = -0.2*h*h/Lx/Lx;         coefs[5] = -0.2*h*h/Lx/Lx;
 
   // Locals, no ghosts needed
-  sind = rank * (n-1) * ncol;
-  find = (rank + 1) * (n-1) * ncol - (pos ? 0 : (n-1));
-  for (Ii = sind; Ii < find; Ii++) {
-    inds[0] = Ii + Ii / (n-1);
-    inds[1] = inds[0] + n;
-    inds[2] = inds[1] + 1;
-    x0 = ((PetscReal) (inds[1]/n))/(m-1);
-    for (i = 0; i < 3; ++i) {
-      for (j = 0; j < 3; ++j) {
-        vals[3*i + j] = -(1.0 + (i==j))/24.0 * h * k / dt;
-      }
+  for (t = 0; t < 2; t++) {
+    if (t==0) {
+      sind = 0;
+      find = (n-1)*(m-1);
+      lr = 1;
+    } else {
+      sind = (n-1)*m;
+      find = (n-1)*(2*m-1);
+      lr = 0;
     }
-    PetscCall(MatSetValues(M, 3, inds, 3, inds, vals, ADD_VALUES));
-    for (i = 0; i < 3; ++i) {
-      for (j = 0; j < 3; ++j) {
-        vals[3*i + j] = -vals[3*i + j] + lr * grads[j] * 0.5*h*k * ( 2.0 * x0*(1-x0) + coefs[i]*(x0-0.5) + coefs[3+i]);
-      }
-    }
-    PetscCall(MatSetValues(K, 3, inds, 3, inds, vals, ADD_VALUES));
-    inds[1] = inds[0];
-    inds[0] = inds[2];
-    inds[2] = inds[1];
-    inds[1] = inds[2] + 1;
-    x0 = ((PetscReal) (inds[1]/n))/(m-1);
-    for (i = 0; i < 3; ++i) {
-      for (j = 0; j < 3; ++j) {
-        vals[3*i + j] = -(1.0 + (i==j))/24.0 * h * k / dt;
-      }
-    }
-    PetscCall(MatSetValues(M, 3, inds, 3, inds, vals, ADD_VALUES));
-    for (i = 0; i < 3; ++i) {
-      for (j = 0; j < 3; ++j) {
-        vals[3*i + j] = -vals[3*i + j] - lr * grads[j] * 0.5*h*k * ( 2.0 * x0*(1-x0) - coefs[i]*(x0-0.5) + coefs[3+i]);
-      }
-    }
-    PetscCall(MatSetValues(K, 3, inds, 3, inds, vals, ADD_VALUES));
-  }
-  PetscCall(MatAssemblyBegin(M, MAT_FINAL_ASSEMBLY));
-
-  if (rank == size/2-1) {
-    for (Ii = n*(m-1) + n_wall; Ii < n*m-1 - n_wall; ++Ii) {
-      inds[0] = Ii;
-      inds[1] = inds[0] + 1;
-      inds[2] = inds[0] + n;
-      inds[3] = inds[2] + 1;
-      for (i = 0; i < 4; ++i){
-        for (j = 0; j < 4; ++j){
-          vals[4*i + j] = kap * ((i<2 && j<2 || i>1 && j>1) ? 1 : -1) * (1.0 + ((3+i-j) % 2))/6.0*k;
+    for (Ii = sind; Ii < find; Ii++) {
+      inds[0] = Ii + Ii / (n-1);
+      inds[1] = inds[0] + n;
+      inds[2] = inds[1] + 1;
+      x0 = ((PetscReal) (inds[1]/n))/(m-1);
+      for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+          vals[3*i + j] = -(1.0 + (i==j))/24.0 * h * k / dt;
         }
       }
-    PetscCall(MatSetValues(K, 4, inds, 4, inds, vals, ADD_VALUES));
+      PetscCall(MatSetValues(M, 3, inds, 3, inds, vals, ADD_VALUES));
+      for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+          vals[3*i + j] = -vals[3*i + j] + lr * grads[j] * 0.5*h*k * ( 2.0 * x0*(1-x0) + coefs[i]*(x0-0.5) + coefs[3+i]);
+        }
+      }
+      PetscCall(MatSetValues(K, 3, inds, 3, inds, vals, ADD_VALUES));
+      inds[1] = inds[0];
+      inds[0] = inds[2];
+      inds[2] = inds[1];
+      inds[1] = inds[2] + 1;
+      x0 = ((PetscReal) (inds[1]/n))/(m-1);
+      for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+          vals[3*i + j] = -(1.0 + (i==j))/24.0 * h * k / dt;
+        }
+      }
+      PetscCall(MatSetValues(M, 3, inds, 3, inds, vals, ADD_VALUES));
+      for (i = 0; i < 3; ++i) {
+        for (j = 0; j < 3; ++j) {
+          vals[3*i + j] = -vals[3*i + j] - lr * grads[j] * 0.5*h*k * ( 2.0 * x0*(1-x0) - coefs[i]*(x0-0.5) + coefs[3+i]);
+        }
+      }
+      PetscCall(MatSetValues(K, 3, inds, 3, inds, vals, ADD_VALUES));
     }
   }
 
@@ -179,6 +180,7 @@ int main(int argc, char **args)
      Computations can be done while messages are in transition
      by placing code between these two statements.
   */
+  PetscCall(MatAssemblyBegin(M, MAT_FINAL_ASSEMBLY));
   PetscCall(MatAssemblyBegin(K, MAT_FINAL_ASSEMBLY));
   PetscCall(MatAssemblyEnd(M, MAT_FINAL_ASSEMBLY));
   PetscCall(MatAssemblyEnd(K, MAT_FINAL_ASSEMBLY));
@@ -190,7 +192,6 @@ int main(int argc, char **args)
   PetscCall(VecDuplicate(f, &f0));
   PetscCall(VecDuplicate(f, &l));
 
-
   /*
      Set exact solution; then compute right-hand-side vector.
      By default we use an exact solution of a vector with all
@@ -198,7 +199,8 @@ int main(int argc, char **args)
      -random_sol forms a solution vector with random components.
   */
   PetscCall(VecSet(c, c0));
-  if (lr) PetscCall(VecSetValues(f0, ncol, f_rows, f_vals, INSERT_VALUES));
+  PetscCall(VecSetValues(f0, ncol, f_rows, f_vals, INSERT_VALUES));
+  PetscCall(VecSetValues(f0, n-2*n_wall, b_rows, b_vals, INSERT_VALUES));
   PetscCall(VecAssemblyBegin(f0));
   PetscCall(VecAssemblyEnd(f0));
 
@@ -297,7 +299,6 @@ int main(int argc, char **args)
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
                       Solve the linear system
      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-  MPI_Request sqs, rqs;
   for (t = 0; t < nt; ++t) {
 
     t5 = clock();
@@ -318,23 +319,20 @@ int main(int argc, char **args)
       PetscCall(MatMultAdd(K, c, l, f));
       PetscCall(VecGetArray(c, &myvals));
       t9 = clock();
-      if (pos) PetscCallMPI(MPI_Irecv(r_ghst, n, MPI_DOUBLE, rank+1, 1, PETSC_COMM_WORLD, &rqs));
-      if (pos != 1) {
-        if (t > 0 || iter > 0) PetscCallMPI(MPI_Wait(&sqs, MPI_STATUS_IGNORE));
-        PetscCallMPI(MPI_Isend(myvals, n, MPI_DOUBLE, rank-1, 1, PETSC_COMM_WORLD, &sqs));
-      }
+      t_loc[3] += ((PetscReal) (t9-t8)) / CLOCKS_PER_SEC;
       t10 = clock();
       t_loc[5] += ((PetscReal) (t10-t9)) / CLOCKS_PER_SEC;
-  
-      for (Ii = 0; Ii < (n-1)*(ncol-1); Ii++) {
-        inds[0] = rank*nloc + Ii + Ii / (n-1);
+ 
+      for (Ii = 0; Ii < (n-1)*(2*m-1); Ii++) {
+        if (Ii/(n-1) == (m-1)) continue;
+        inds[0] = Ii + Ii / (n-1);
         inds[1] = inds[0] + n;
         inds[2] = inds[1] + 1;
         for (i = 0; i < 12; ++i) {
           vals[i] = 0;
         }
         for (i = 0; i < 3; ++i) {
-          locs[i] = myvals[inds[i] - rank*nloc];
+          locs[i] = myvals[inds[i]];
         }
         sum = locs[0] + locs[1] + locs[2];
         for (i = 0; i < 3; ++i) {
@@ -358,7 +356,7 @@ int main(int argc, char **args)
           vals[i] = 0;
         }
         for (i = 0; i < 3; ++i){
-          locs[i] = myvals[inds[i] - rank*nloc]; 
+          locs[i] = myvals[inds[i]]; 
         }
         sum = locs[0] + locs[1] + locs[2];
         for (i = 0; i < 3; ++i) {
@@ -377,56 +375,6 @@ int main(int argc, char **args)
       }
 
       t_tmp = 0;
-      if (pos) {
-        t11 = clock();
-        PetscCallMPI(MPI_Wait(&rqs, MPI_STATUS_IGNORE));
-        t12 = clock();
-        t_tmp = ((PetscReal) (t12-t11)) / CLOCKS_PER_SEC;
-        PetscCallMPI(MPI_Wait(&rqs, MPI_STATUS_IGNORE));
-        for (Ii = (n-1)*(ncol-1); Ii < (n-1)*ncol; Ii++) {
-          inds[0] = rank*nloc + Ii + Ii / (n-1); locs[0] = myvals[inds[0] - rank*nloc];
-          inds[1] = inds[0] + n;                 locs[1] = r_ghst[inds[1] - (rank+1)*nloc];
-          inds[2] = inds[1] + 1;                 locs[2] = r_ghst[inds[2] - (rank+1)*nloc];
-          for (i = 0; i < 12; ++i) {
-            vals[i] = 0;
-          }
-          sum = locs[0] + locs[1] + locs[2];
-          for (i = 0; i < 3; ++i) {
-            for (j = 0; j < 3; ++j) {
-              vals[12     ]  = prods[3*i + j] * h * k / 6.0;
-              vals[3*i + j] += vals[12] * sum;
-              vals[12     ] *= locs[j];
-              vals[3*i    ] += vals[12];
-              vals[3*i + 1] += vals[12];
-              vals[3*i + 2] += vals[12];
-              vals[9 + i  ] += vals[12] * sum;
-            }
-          }
-          PetscCall(VecSetValues(f, 3, inds, vals + 9, ADD_VALUES));
-          PetscCall(MatSetValues(J, 3, inds, 3, inds, vals, ADD_VALUES));
-          inds[1] = inds[0];     locs[1] = locs[0];
-          inds[0] = inds[2];     locs[0] = locs[2];
-          inds[2] = inds[1];     locs[2] = locs[1];
-          inds[1] = inds[2] + 1; locs[1] = myvals[inds[1] - rank*nloc];
-          for (i = 0; i < 12; ++i) {
-            vals[i] = 0;
-          }
-          sum = locs[0] + locs[1] + locs[2];
-          for (i = 0; i < 3; ++i) {
-            for (j = 0; j < 3; ++j) {
-              vals[12     ]  = prods[3*i + j] * h * k / 6.0;
-              vals[3*i + j] += vals[12] * sum;
-              vals[12     ] *= locs[j];
-              vals[3*i    ] += vals[12];
-              vals[3*i + 1] += vals[12];
-              vals[3*i + 2] += vals[12];
-              vals[9 + i  ] += vals[12] * sum;
-            }
-          }
-          PetscCall(VecSetValues(f, 3, inds, vals + 9, ADD_VALUES));
-          PetscCall(MatSetValues(J, 3, inds, 3, inds, vals, ADD_VALUES));
-        }
-      }
       t13 = clock();
       t_loc[5] += t_tmp;
       t_loc[6] += ((PetscReal) (t13-t10)) / CLOCKS_PER_SEC - t_tmp;
@@ -441,10 +389,12 @@ int main(int argc, char **args)
       t_loc[7] += ((PetscReal) (t14-t13)) / CLOCKS_PER_SEC;
 
       PetscCall(VecNorm(f, NORM_2, &norm));
+      if (verbose) PetscCall(PetscPrintf(PETSC_COMM_WORLD, "Step: %2d, Iteration: %1d, Rnorm: %e", t, iter, norm));
       t15 = clock();
       t_loc[3] += ((PetscReal) (t15-t14)) / CLOCKS_PER_SEC;
-      if (verbose) PetscCall(PetscPrintf(PETSC_COMM_WORLD, "Step: %2d, Iteration: %1d, Rnorm: %e", t, iter, norm));
-      if (norm < tol) break;
+      if (norm < tol) {
+        break;
+      }
 
       PetscCall(KSPSetOperators(ksp, J, J));
       PetscCall(KSPSolve(ksp, f, u));
@@ -453,9 +403,9 @@ int main(int argc, char **args)
 
       PetscCall(VecAXPY(c, -1.0, u));
       PetscCall(VecNorm(u, NORM_2, &norm));
+      if (verbose) PetscCall(PetscPrintf(PETSC_COMM_WORLD, ", Unorm: %e", norm));
       t17 = clock();
       t_loc[3] += ((PetscReal) (t17-t16)) / CLOCKS_PER_SEC;
-      if (verbose) PetscCall(PetscPrintf(PETSC_COMM_WORLD, ", Unorm: %e", norm));
       if (norm < tol) break;
 
     }
@@ -465,30 +415,22 @@ int main(int argc, char **args)
 
   }
 
-  if (pos != 1) PetscCallMPI(MPI_Wait(&sqs, MPI_STATUS_IGNORE));
-
   if (verbose) PetscCall(VecView(c, PETSC_VIEWER_STDOUT_WORLD));
 
-  if (rank) {
-    PetscCallMPI(MPI_Reduce(&t_loc, NULL, 9, MPI_DOUBLE, MPI_SUM, 0, PETSC_COMM_WORLD));
-  } else {
-    PetscReal f[9], f_tot = 0;
-    PetscCallMPI(MPI_Reduce(&t_loc, &f, 9, MPI_DOUBLE, MPI_SUM, 0, PETSC_COMM_WORLD));
-    for (int i=0; i<9; ++i){
-      f[i] /= size;
-      f_tot += f[i];
-    }
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to compute initial values: %e\n", f[0]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to assemble mats and vecs: %e\n", f[1]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to initialize solver obj.: %e\n", f[2]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to perform vec operations: %e\n", f[3]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to duplicate matrix for J: %e\n", f[4]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to comm and wait for msgs: %e\n", f[5]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to compute values in loop: %e\n", f[6]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to assemble Newton matrix: %e\n", f[7]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to solve Newton iteration: %e\n", f[8]));
-    PetscCall(PetscPrintf(PETSC_COMM_SELF, "\nTOTAL TIME                    : %e\n", f_tot));
-  }
+
+  PetscReal f_tot = t_loc[0] + t_loc[1] + t_loc[2] + t_loc[3] + t_loc[4] + t_loc[5] + t_loc[6] + t_loc[7] + t_loc[8];
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to compute initial values: %e\n", t_loc[0]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to assemble mats and vecs: %e\n", t_loc[1]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to initialize solver obj.: %e\n", t_loc[2]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to perform vec operations: %e\n", t_loc[3]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to duplicate matrix for J: %e\n", t_loc[4]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to comm and wait for msgs: %e\n", t_loc[5]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to compute values in loop: %e\n", t_loc[6]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to assemble Newton matrix: %e\n", t_loc[7]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to solve Newton iteration: %e\n", t_loc[8]));
+  PetscCall(PetscPrintf(PETSC_COMM_SELF, "\nTOTAL TIME                    : %e\n", f_tot));
+
+  // Print time info
 
   /*
      Free work space.  All PETSc objects should be destroyed when they
@@ -497,6 +439,8 @@ int main(int argc, char **args)
   free(r_ghst);
   free(f_vals);
   free(f_rows);
+  free(b_vals);
+  free(b_rows);
   free(myvals);
   PetscCall(KSPDestroy(&ksp));
   PetscCall(VecDestroy(&u));

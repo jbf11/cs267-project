@@ -1,0 +1,11 @@
+Time to compute initial values: 1.201078e-02
+Time to assemble mats and vecs: 5.490500e-03
+Time to initialize solver obj.: 7.444687e-03
+Time to perform vec operations: 1.478778e-02
+Time to duplicate matrix for J: 2.206347e-02
+Time to comm and wait for msgs: 2.973125e-04
+Time to compute values in loop: 9.931631e-02
+Time to assemble Newton matrix: 3.702697e-02
+Time to solve Newton iteration: 7.557994e-02
+
+TOTAL TIME                    : 2.740178e-01

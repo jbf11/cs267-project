@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -A mp309
-#SBATCH -N 1
+#SBATCH -N 01
 #SBATCH -C haswell
 #SBATCH -q debug
 #SBATCH -J var
-#SBATCH --ntasks-per-node=2
+#SBATCH --ntasks-per-node=01
 #SBATCH -t 00:30:00
 
 #OpenMP settings:
@@ -13,4 +13,4 @@
 # export OMP_PROC_BIND=spread
 
 #run the application:
-srun -n 2 ./var-flux -use_mumps_lu -v -nt 500
+srun -n 01 ./sn-var-flux -nt 10 -n 004 -m 004 > bm-010-004-004-01-01-var.out

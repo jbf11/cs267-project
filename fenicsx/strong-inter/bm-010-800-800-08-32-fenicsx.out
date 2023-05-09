@@ -1,0 +1,512 @@
+0: Success! Size of u: 5038, 542
+Time: 3.098583936691284
+128: Success! Size of u: 5036, 592
+Time: 2.7085652351379395
+64: Success! Size of u: 5036, 614
+Time: 2.5627171993255615
+96: Success! Size of u: 5056, 722
+Time: 2.9866247177124023
+192: Success! Size of u: 4990, 516
+Time: 3.1755459308624268
+160: Success! Size of u: 5006, 568
+Time: 2.597290515899658
+224: Success! Size of u: 4992, 718
+Time: 3.0802900791168213
+32: Success! Size of u: 5000, 600
+Time: 2.6256134510040283
+1: Success! Size of u: 5024, 550
+Time: 2.9868388175964355
+129: Success! Size of u: 4972, 510
+Time: 2.704763650894165
+65: Success! Size of u: 5016, 548
+Time: 2.6135854721069336
+97: Success! Size of u: 5062, 556
+Time: 2.7206709384918213
+193: Success! Size of u: 4984, 718
+Time: 3.0916552543640137
+161: Success! Size of u: 5118, 372
+Time: 2.6071698665618896
+225: Success! Size of u: 5060, 536
+Time: 3.085574150085449
+33: Success! Size of u: 5020, 578
+Time: 2.6225640773773193
+2: Success! Size of u: 5014, 614
+Time: 2.9777727127075195
+130: Success! Size of u: 5012, 576
+Time: 2.8398213386535645
+66: Success! Size of u: 5060, 526
+Time: 2.5963120460510254
+98: Success! Size of u: 5028, 538
+Time: 2.7290918827056885
+226: Success! Size of u: 5052, 566
+Time: 3.1482365131378174
+3: Success! Size of u: 5000, 588
+Time: 2.935108184814453
+194: Success! Size of u: 4962, 550
+Time: 3.0841143131256104
+162: Success! Size of u: 5064, 334
+Time: 2.587151527404785
+34: Success! Size of u: 4992, 590
+Time: 2.72332763671875
+4: Success! Size of u: 5024, 612
+Time: 3.098939895629883
+131: Success! Size of u: 5050, 586
+Time: 2.6151323318481445
+67: Success! Size of u: 5114, 374
+Time: 2.5018832683563232
+99: Success! Size of u: 5054, 560
+Time: 2.6434245109558105
+195: Success! Size of u: 5002, 598
+Time: 3.1387197971343994
+163: Success! Size of u: 4960, 574
+Time: 2.569669246673584
+227: Success! Size of u: 5020, 550
+Time: 3.1191587448120117
+35: Success! Size of u: 4984, 680
+Time: 2.7098445892333984
+5: Success! Size of u: 5018, 588
+Time: 2.9676647186279297
+132: Success! Size of u: 4976, 700
+Time: 2.5912656784057617
+68: Success! Size of u: 5046, 506
+Time: 2.5479438304901123
+100: Success! Size of u: 5034, 664
+Time: 2.9948127269744873
+196: Success! Size of u: 5012, 578
+Time: 3.1172423362731934
+164: Success! Size of u: 4962, 606
+Time: 2.496612548828125
+228: Success! Size of u: 5064, 434
+Time: 3.165224313735962
+36: Success! Size of u: 5022, 572
+Time: 2.8078625202178955
+6: Success! Size of u: 4974, 596
+Time: 2.9851973056793213
+133: Success! Size of u: 4946, 554
+Time: 2.5475311279296875
+69: Success! Size of u: 5070, 474
+Time: 2.5513205528259277
+101: Success! Size of u: 5078, 470
+Time: 3.0772483348846436
+197: Success! Size of u: 4990, 532
+Time: 3.1538784503936768
+165: Success! Size of u: 5024, 532
+Time: 2.49748158454895
+229: Success! Size of u: 5000, 584
+Time: 3.0965311527252197
+37: Success! Size of u: 5068, 596
+Time: 2.571873903274536
+7: Success! Size of u: 4994, 530
+Time: 2.9507181644439697
+134: Success! Size of u: 5028, 572
+Time: 2.5601999759674072
+70: Success! Size of u: 5018, 554
+Time: 2.5222790241241455
+102: Success! Size of u: 5022, 810
+Time: 2.764444589614868
+198: Success! Size of u: 5062, 444
+Time: 3.1621816158294678
+166: Success! Size of u: 5010, 614
+Time: 2.4991707801818848
+230: Success! Size of u: 5032, 600
+Time: 3.119223117828369
+38: Success! Size of u: 5024, 574
+Time: 2.8080544471740723
+8: Success! Size of u: 5032, 556
+Time: 3.0728886127471924
+135: Success! Size of u: 5014, 548
+Time: 2.557253122329712
+71: Success! Size of u: 5022, 556
+Time: 2.602717876434326
+103: Success! Size of u: 5086, 552
+Time: 2.720611333847046
+199: Success! Size of u: 5100, 456
+Time: 3.1116151809692383
+167: Success! Size of u: 4996, 604
+Time: 2.558225393295288
+231: Success! Size of u: 5100, 458
+Time: 3.080244779586792
+39: Success! Size of u: 4984, 642
+Time: 2.562913179397583
+9: Success! Size of u: 5056, 536
+Time: 2.939561605453491
+136: Success! Size of u: 5022, 522
+Time: 2.617241144180298
+72: Success! Size of u: 5010, 574
+Time: 2.504864454269409
+104: Success! Size of u: 5092, 596
+Time: 2.7250123023986816
+200: Success! Size of u: 5034, 602
+Time: 3.1366069316864014
+168: Success! Size of u: 5038, 568
+Time: 2.515796661376953
+232: Success! Size of u: 5012, 572
+Time: 3.114550828933716
+40: Success! Size of u: 5056, 372
+Time: 2.710167169570923
+10: Success! Size of u: 5070, 612
+Time: 2.8943192958831787
+137: Success! Size of u: 4992, 574
+Time: 2.61881422996521
+73: Success! Size of u: 5050, 392
+Time: 2.5159876346588135
+105: Success! Size of u: 5020, 546
+Time: 2.726524591445923
+201: Success! Size of u: 4982, 608
+Time: 3.084031581878662
+169: Success! Size of u: 4960, 568
+Time: 2.5339901447296143
+233: Success! Size of u: 5042, 596
+Time: 3.124035358428955
+41: Success! Size of u: 4954, 610
+Time: 2.637286901473999
+11: Success! Size of u: 5030, 556
+Time: 3.0860376358032227
+138: Success! Size of u: 4996, 616
+Time: 2.571693181991577
+74: Success! Size of u: 4992, 420
+Time: 2.504885196685791
+106: Success! Size of u: 4990, 650
+Time: 2.7038161754608154
+202: Success! Size of u: 4998, 612
+Time: 3.1752355098724365
+170: Success! Size of u: 5042, 578
+Time: 2.5940024852752686
+234: Success! Size of u: 5004, 684
+Time: 3.075624942779541
+42: Success! Size of u: 5036, 576
+Time: 2.5719761848449707
+12: Success! Size of u: 5030, 618
+Time: 3.0952394008636475
+139: Success! Size of u: 5006, 620
+Time: 2.57596492767334
+75: Success! Size of u: 4998, 538
+Time: 2.6062161922454834
+107: Success! Size of u: 5008, 552
+Time: 2.9827914237976074
+203: Success! Size of u: 5022, 572
+Time: 3.15639591217041
+171: Success! Size of u: 5062, 562
+Time: 2.540036201477051
+235: Success! Size of u: 5000, 604
+Time: 3.1365444660186768
+43: Success! Size of u: 4994, 510
+Time: 2.7052433490753174
+13: Success! Size of u: 5030, 560
+Time: 2.8965518474578857
+140: Success! Size of u: 5026, 576
+Time: 2.617084264755249
+76: Success! Size of u: 5070, 520
+Time: 2.6120219230651855
+108: Success! Size of u: 5040, 424
+Time: 2.8564059734344482
+204: Success! Size of u: 4948, 578
+Time: 3.0991299152374268
+172: Success! Size of u: 5074, 400
+Time: 2.533297300338745
+236: Success! Size of u: 5010, 596
+Time: 3.1151063442230225
+44: Success! Size of u: 4976, 562
+Time: 2.6965250968933105
+14: Success! Size of u: 5012, 642
+Time: 2.8965559005737305
+141: Success! Size of u: 5002, 540
+Time: 2.5716910362243652
+77: Success! Size of u: 5144, 202
+Time: 2.6125693321228027
+109: Success! Size of u: 4984, 612
+Time: 2.882551670074463
+205: Success! Size of u: 4996, 524
+Time: 3.1090855598449707
+173: Success! Size of u: 5018, 546
+Time: 2.499135732650757
+237: Success! Size of u: 5104, 426
+Time: 3.1145505905151367
+45: Success! Size of u: 5072, 640
+Time: 2.610755443572998
+15: Success! Size of u: 5046, 580
+Time: 2.893429756164551
+142: Success! Size of u: 5042, 544
+Time: 2.8399839401245117
+78: Success! Size of u: 5072, 622
+Time: 2.7097580432891846
+110: Success! Size of u: 5048, 558
+Time: 2.9007468223571777
+206: Success! Size of u: 5016, 574
+Time: 3.1631462574005127
+174: Success! Size of u: 4982, 568
+Time: 2.569967746734619
+238: Success! Size of u: 4994, 598
+Time: 3.118955612182617
+46: Success! Size of u: 5072, 382
+Time: 2.6313984394073486
+16: Success! Size of u: 4982, 678
+Time: 2.9850246906280518
+143: Success! Size of u: 5024, 588
+Time: 2.591655731201172
+79: Success! Size of u: 5084, 414
+Time: 2.501814365386963
+111: Success! Size of u: 5072, 378
+Time: 2.7295007705688477
+207: Success! Size of u: 5016, 596
+Time: 3.171940326690674
+175: Success! Size of u: 5074, 416
+Time: 2.4992616176605225
+239: Success! Size of u: 5006, 422
+Time: 3.1557044982910156
+47: Success! Size of u: 5092, 458
+Time: 2.636847496032715
+17: Success! Size of u: 5018, 546
+Time: 3.0983662605285645
+144: Success! Size of u: 4998, 534
+Time: 2.5598673820495605
+80: Success! Size of u: 5022, 552
+Time: 2.50191330909729
+112: Success! Size of u: 5014, 576
+Time: 2.9827628135681152
+208: Success! Size of u: 4972, 658
+Time: 3.1621828079223633
+176: Success! Size of u: 5032, 622
+Time: 2.5707004070281982
+240: Success! Size of u: 4990, 562
+Time: 3.080226182937622
+48: Success! Size of u: 5026, 614
+Time: 2.6257290840148926
+18: Success! Size of u: 4988, 574
+Time: 3.0926127433776855
+145: Success! Size of u: 5010, 554
+Time: 2.5474960803985596
+81: Success! Size of u: 4956, 548
+Time: 2.504958152770996
+113: Success! Size of u: 5026, 556
+Time: 2.6646430492401123
+209: Success! Size of u: 4962, 600
+Time: 3.104556083679199
+177: Success! Size of u: 5036, 586
+Time: 2.5115089416503906
+241: Success! Size of u: 5024, 638
+Time: 3.090632200241089
+49: Success! Size of u: 5050, 488
+Time: 2.571922779083252
+19: Success! Size of u: 5008, 578
+Time: 3.098496437072754
+146: Success! Size of u: 5032, 488
+Time: 2.5606696605682373
+82: Success! Size of u: 4978, 558
+Time: 2.5630831718444824
+114: Success! Size of u: 4982, 540
+Time: 2.705240249633789
+210: Success! Size of u: 5052, 588
+Time: 3.16552996635437
+178: Success! Size of u: 5022, 560
+Time: 2.5581607818603516
+242: Success! Size of u: 5088, 424
+Time: 3.1091341972351074
+50: Success! Size of u: 5074, 454
+Time: 2.807591199874878
+20: Success! Size of u: 5008, 588
+Time: 3.098938465118408
+147: Success! Size of u: 5092, 400
+Time: 2.547452449798584
+83: Success! Size of u: 4970, 580
+Time: 2.613673686981201
+115: Success! Size of u: 5038, 666
+Time: 3.0771775245666504
+211: Success! Size of u: 5022, 682
+Time: 3.175271987915039
+179: Success! Size of u: 5012, 734
+Time: 2.5059902667999268
+243: Success! Size of u: 5024, 496
+Time: 3.1302881240844727
+51: Success! Size of u: 5008, 576
+Time: 2.562168836593628
+21: Success! Size of u: 5000, 646
+Time: 3.098905563354492
+148: Success! Size of u: 5044, 588
+Time: 2.7039880752563477
+84: Success! Size of u: 5010, 576
+Time: 2.510793685913086
+116: Success! Size of u: 5044, 588
+Time: 2.8827269077301025
+212: Success! Size of u: 5024, 490
+Time: 3.0971121788024902
+180: Success! Size of u: 5026, 594
+Time: 2.533512830734253
+244: Success! Size of u: 5006, 556
+Time: 3.1191956996917725
+52: Success! Size of u: 5018, 536
+Time: 2.577437400817871
+22: Success! Size of u: 5036, 558
+Time: 2.976877450942993
+149: Success! Size of u: 5022, 568
+Time: 2.5983824729919434
+85: Success! Size of u: 5008, 542
+Time: 2.587188720703125
+117: Success! Size of u: 5050, 594
+Time: 2.719494581222534
+213: Success! Size of u: 4980, 560
+Time: 3.1208291053771973
+181: Success! Size of u: 5050, 622
+Time: 2.5333986282348633
+245: Success! Size of u: 4992, 674
+Time: 3.0855133533477783
+53: Success! Size of u: 4992, 596
+Time: 2.5622756481170654
+23: Success! Size of u: 5032, 630
+Time: 2.944896936416626
+150: Success! Size of u: 5042, 524
+Time: 2.5968689918518066
+86: Success! Size of u: 5050, 542
+Time: 2.544447898864746
+118: Success! Size of u: 4990, 568
+Time: 3.0770397186279297
+214: Success! Size of u: 5060, 526
+Time: 3.1264917850494385
+182: Success! Size of u: 5020, 624
+Time: 2.499220371246338
+246: Success! Size of u: 5112, 424
+Time: 3.1144769191741943
+54: Success! Size of u: 5070, 436
+Time: 2.5851962566375732
+24: Success! Size of u: 5054, 548
+Time: 2.8910977840423584
+151: Success! Size of u: 5020, 558
+Time: 2.5473899841308594
+87: Success! Size of u: 5040, 608
+Time: 2.5058000087738037
+119: Success! Size of u: 5032, 592
+Time: 2.9744691848754883
+215: Success! Size of u: 5126, 480
+Time: 3.1406705379486084
+183: Success! Size of u: 5040, 634
+Time: 2.4975337982177734
+247: Success! Size of u: 5038, 478
+Time: 3.0855982303619385
+55: Success! Size of u: 4968, 638
+Time: 2.7059807777404785
+25: Success! Size of u: 5034, 402
+Time: 2.9447572231292725
+152: Success! Size of u: 5020, 556
+Time: 2.839841365814209
+88: Success! Size of u: 5108, 370
+Time: 2.5377676486968994
+120: Success! Size of u: 5010, 538
+Time: 2.7293848991394043
+216: Success! Size of u: 4990, 594
+Time: 3.1681697368621826
+184: Success! Size of u: 5016, 554
+Time: 2.502608060836792
+248: Success! Size of u: 5000, 538
+Time: 3.136810779571533
+56: Success! Size of u: 5014, 590
+Time: 2.8078742027282715
+26: Success! Size of u: 5016, 550
+Time: 2.972041368484497
+153: Success! Size of u: 4988, 614
+Time: 2.5630598068237305
+89: Success! Size of u: 5046, 548
+Time: 2.5048372745513916
+121: Success! Size of u: 4978, 576
+Time: 2.9350192546844482
+217: Success! Size of u: 5036, 614
+Time: 3.1027350425720215
+185: Success! Size of u: 5026, 560
+Time: 2.5880842208862305
+249: Success! Size of u: 5054, 412
+Time: 3.114603042602539
+57: Success! Size of u: 5018, 544
+Time: 2.6228036880493164
+27: Success! Size of u: 4978, 554
+Time: 2.8965911865234375
+154: Success! Size of u: 5006, 616
+Time: 2.7211999893188477
+90: Success! Size of u: 5056, 644
+Time: 2.504793167114258
+122: Success! Size of u: 5036, 462
+Time: 2.8913421630859375
+218: Success! Size of u: 5026, 526
+Time: 3.164212465286255
+186: Success! Size of u: 4976, 590
+Time: 2.5325920581817627
+250: Success! Size of u: 4990, 558
+Time: 3.1367921829223633
+58: Success! Size of u: 4970, 554
+Time: 2.5940120220184326
+28: Success! Size of u: 5012, 530
+Time: 2.9417409896850586
+155: Success! Size of u: 4998, 618
+Time: 2.6381583213806152
+91: Success! Size of u: 5120, 476
+Time: 2.504798173904419
+123: Success! Size of u: 5028, 436
+Time: 2.8358912467956543
+219: Success! Size of u: 5006, 580
+Time: 3.1659955978393555
+187: Success! Size of u: 5018, 626
+Time: 2.4993131160736084
+251: Success! Size of u: 5058, 488
+Time: 3.139660596847534
+59: Success! Size of u: 4972, 690
+Time: 2.561922788619995
+29: Success! Size of u: 4974, 624
+Time: 2.946948766708374
+156: Success! Size of u: 5056, 544
+Time: 2.645911931991577
+92: Success! Size of u: 5038, 560
+Time: 2.7100608348846436
+124: Success! Size of u: 5070, 540
+Time: 3.077831983566284
+220: Success! Size of u: 5008, 592
+Time: 3.0825774669647217
+188: Success! Size of u: 5002, 532
+Time: 2.529076099395752
+252: Success! Size of u: 5192, 214
+Time: 3.119292736053467
+60: Success! Size of u: 5016, 658
+Time: 2.629561424255371
+30: Success! Size of u: 5032, 534
+Time: 3.09861421585083
+157: Success! Size of u: 5056, 380
+Time: 2.576059579849243
+93: Success! Size of u: 5012, 560
+Time: 2.571885824203491
+125: Success! Size of u: 5066, 382
+Time: 2.823469877243042
+221: Success! Size of u: 5050, 386
+Time: 3.162416696548462
+189: Success! Size of u: 5010, 414
+Time: 2.5928568840026855
+253: Success! Size of u: 5098, 494
+Time: 3.1250109672546387
+61: Success! Size of u: 5030, 538
+Time: 2.8080763816833496
+31: Success! Size of u: 4994, 550
+Time: 3.093496084213257
+158: Success! Size of u: 5010, 460
+Time: 2.586012840270996
+94: Success! Size of u: 5068, 500
+Time: 2.5019638538360596
+126: Success! Size of u: 4984, 562
+Time: 2.643425226211548
+222: Success! Size of u: 5032, 596
+Time: 3.134545087814331
+190: Success! Size of u: 4998, 504
+Time: 2.6075494289398193
+254: Success! Size of u: 5022, 502
+Time: 3.1540894508361816
+62: Success! Size of u: 5050, 620
+Time: 2.6372764110565186
+159: Success! Size of u: 4970, 558
+Time: 2.5870556831359863
+95: Success! Size of u: 5052, 416
+Time: 2.5033979415893555
+127: Success! Size of u: 5008, 552
+Time: 2.6434600353240967
+223: Success! Size of u: 4974, 610
+Time: 3.086846351623535
+191: Success! Size of u: 5028, 532
+Time: 2.5158209800720215
+255: Success! Size of u: 5062, 468
+Time: 3.1145615577697754
+63: Success! Size of u: 4976, 558
+Time: 2.57187557220459

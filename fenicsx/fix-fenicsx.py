@@ -21,7 +21,7 @@ log.set_log_level(log.LogLevel.WARNING)
 Lx = 20
 Ly = 20
 h = 6
-nx, ny = 160, 160
+nx, ny = 5120, 5120
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [np.array([0, 0]), np.array([Lx, Ly])], 
                                [nx, ny], mesh.CellType.triangle)
 
