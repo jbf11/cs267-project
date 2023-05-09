@@ -4,9 +4,6 @@ from mpi4py import MPI
 # Initialize MPI section
 mesh_comm = MPI.COMM_WORLD  # distribute built mesh
 
-print(str(mesh_comm.Get_rank()) + ": start!")
-
-
 from petsc4py import PETSc
 
 import ufl
@@ -24,11 +21,11 @@ log.set_log_level(log.LogLevel.WARNING)
 Lx = 20
 Ly = 20
 h = 6
-nx, ny = 15, 15
+nx, ny = 160, 160
 domain = mesh.create_rectangle(MPI.COMM_WORLD, [np.array([0, 0]), np.array([Lx, Ly])], 
                                [nx, ny], mesh.CellType.triangle)
 
-print(str(mesh_comm.rank) + "here!")
+num_steps = 10
 
 # define element and function space
 P = ufl.FiniteElement("Lagrange", domain.ufl_cell(), 1)
@@ -59,8 +56,6 @@ sorted_facets = np.argsort(facet_indices)
 facet_tag = mesh.meshtags(domain, fdim, facet_indices[sorted_facets], facet_markers[sorted_facets])
 ds = ufl.Measure("ds", domain=domain, subdomain_data=facet_tag)
 
-print(str(mesh_comm.rank) + "here!")
-
 # Functions for initial condition and previous time step
 cl0 = fem.Function(CL)
 cr0 = fem.Function(CR)
@@ -88,19 +83,18 @@ solver.rtol = 1e-12
 solver.report = True
 solver.max_it = 10
 
+#"""
 ksp = solver.krylov_solver
 opts = PETSc.Options()
 option_prefix = ksp.getOptionsPrefix()
-opts[f"{option_prefix}ksp_type"] = "preonly"
-opts[f"{option_prefix}pc_type"] = "lu"
-opts[f"{option_prefix}pc_factor_mat_solver_type"] = "mumps"
+opts[f"{option_prefix}ksp_type"] = "gmres"#"preonly"
+opts[f"{option_prefix}pc_type"] = "asm"#"lu"
+#opts[f"{option_prefix}pc_factor_mat_solver_type"] = "superlu_dist"
 ksp.setFromOptions()
-
-print(str(mesh_comm.rank) + "here!")
+#"""
 
 # Define temporal parameters
-dt = 0.1
-num_steps = 500
+dt = 0.1*Lx*Ly/((nx+1)*(ny+1))
 T = dt * num_steps
 DLT.value = dt
 
