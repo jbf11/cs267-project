@@ -467,7 +467,7 @@ int main(int argc, char **args)
 
   if (verbose) PetscCall(VecView(c, PETSC_VIEWER_STDOUT_WORLD));
 
-
+/*
   if (rank) {
     PetscCallMPI(MPI_Reduce(&t_loc, NULL, 9, MPI_DOUBLE, MPI_SUM, 0, PETSC_COMM_WORLD));
   } else {
@@ -487,7 +487,7 @@ int main(int argc, char **args)
     PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to assemble Newton matrix: %e\n", f[7]));
     PetscCall(PetscPrintf(PETSC_COMM_SELF, "Time to solve Newton iteration: %e\n", f[8]));
     PetscCall(PetscPrintf(PETSC_COMM_SELF, "\nTOTAL TIME                    : %e\n", f_tot));
-  }
+  } */
 
   // Print time info
 

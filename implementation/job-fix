@@ -13,4 +13,8 @@
 # export OMP_PROC_BIND=spread
 
 #run the application:
-srun -n 32 ./fix-flux -nt 10 -n 1024 -m 1024 > bm-010-1024-1024-01-32-fix.out
+#srun -n 32 sde -hsw -ivb -d -iform 1 -omix prof-1024-01-32-fix.out -i -global_region -start_ssc_mark 111:repeat -stop_ssc_mark 222:repeat -- ./prof-fix-flux
+#srun -n 32 --cpu_bind=cores vtune -start-paused -r vt_1024_01_32 -collect memory-access -finalization-mode=none -trace-mpi -- ./prof-fix-flux
+srun -n 32 ./fix-flux -nt 10 -n 896 -m 896 -citations
+#srun -n 32 ./sscript.sh 10 1024
+#srun -n 32 advixe-cl -trace-mpi --collect survey --project-dir ./prof-1024-01-32 -- ./prof-fix-flux -nt 10 -n 1024 -m 1024 

@@ -1,2 +1,8 @@
 petsc
 */slurm*out
+implementation/*.txt
+implementation/*html
+implementation/*+*
+implementation/vt_*
+implementation/prof*
+
