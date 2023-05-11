@@ -1,14 +1,16 @@
 
-static char help[] = "Solves a linear system in parallel with KSP. Modified from ex2.c \n\
-                      Illustrate how to use external packages MUMPS, SUPERLU and STRUMPACK \n\
+static char help[] = "Solves a nonlinear convection-diffusion problem in parallel with KSP \n\
+                      Assumes a fixed flux on the coupled interface (simplified problem) \n\
+                      Supports direct solvers of MUMPS, SUPERLU_DIST. Iterative solver ASM \n\
 Input parameters include:\n\
   -m <mesh_x>       : number of mesh points in x-direction\n\
-  -n <mesh_y>       : number of mesh points in y-direction\n\n";
+  -n <mesh_y>       : number of mesh points in y-direction\n\
+  -nt               : number of time steps\n\
+  -v                : verbose run option (iteration details)\n\n";
 
 #include <petscksp.h>
 #include <math.h>
 #include <time.h>
-#include <omp.h>
 
 int main(int argc, char **args)
 {
@@ -91,20 +93,6 @@ int main(int argc, char **args)
   PetscCall(MatMPIAIJSetPreallocation(M, 7, NULL, 3, NULL));
   PetscCall(MatSetOption(M, MAT_KEEP_NONZERO_PATTERN, PETSC_TRUE));
 
-  /*
-     Set matrix elements for the 2-D, five-point stencil in parallel.
-      - Each processor needs to insert only elements that it owns
-        locally (but any non-local elements will be sent to the
-        appropriate processor during matrix assembly).
-      - Always specify global rows and columns of matrix entries.
-
-     Note: this uses the less common natural ordering that orders first
-     all the unknowns for x = h then for x = 2h etc; Hence you see J = Ii +- n
-     instead of J = I +- m as you might expect. The more standard ordering
-     would first do all variables for y = h, then y = 2h etc.
-
-   */
-
   PetscCall(PetscLogStageRegister("Assembly", &stage));
   PetscCall(PetscLogStagePush(stage));
 
@@ -176,8 +164,6 @@ int main(int argc, char **args)
   /*
      Assemble matrix, using the 2-step process:
        MatAssemblyBegin(), MatAssemblyEnd()
-     Computations can be done while messages are in transition
-     by placing code between these two statements.
   */
   PetscCall(MatAssemblyBegin(K, MAT_FINAL_ASSEMBLY));
   PetscCall(MatAssemblyEnd(M, MAT_FINAL_ASSEMBLY));
@@ -191,12 +177,6 @@ int main(int argc, char **args)
   PetscCall(VecDuplicate(f, &l));
 
 
-  /*
-     Set exact solution; then compute right-hand-side vector.
-     By default we use an exact solution of a vector with all
-     elements of 1.0;  Alternatively, using the runtime option
-     -random_sol forms a solution vector with random components.
-  */
   PetscCall(VecSet(c, c0));
   if (lr) PetscCall(VecSetValues(f0, ncol, f_rows, f_vals, INSERT_VALUES));
   PetscCall(VecAssemblyBegin(f0));
@@ -215,12 +195,6 @@ int main(int argc, char **args)
   PetscCall(KSPCreate(PETSC_COMM_WORLD, &ksp));
   PetscCall(KSPSetOperators(ksp, K, K));
 
-  /*
-    Example of how to use external package MUMPS
-    Note: runtime options
-          '-ksp_type preonly -pc_type lu -pc_factor_mat_solver_type mumps -mat_mumps_icntl_7 3 -mat_mumps_icntl_1 0.0'
-          are equivalent to these procedural calls
-  */
 #if defined(PETSC_HAVE_MUMPS)
   flg_mumps    = PETSC_FALSE;
   PetscCall(PetscOptionsGetBool(NULL, NULL, "-use_mumps_lu", &flg_mumps, NULL));
@@ -234,12 +208,6 @@ int main(int argc, char **args)
 
 #endif
 
-  /*
-    Example of how to use external package SuperLU
-    Note: runtime options
-          '-ksp_type preonly -pc_type ilu -pc_factor_mat_solver_type superlu -mat_superlu_ilu_droptol 1.e-8'
-          are equivalent to these procedual calls
-  */
 #if defined(PETSC_HAVE_SUPERLU) || defined(PETSC_HAVE_SUPERLU_DIST)
   flg_ilu     = PETSC_FALSE;
   flg_superlu = PETSC_FALSE;
@@ -267,25 +235,6 @@ int main(int argc, char **args)
   }
 #endif
 
-  /*
-    Example of how to use procedural calls that are equivalent to
-          '-ksp_type preonly -pc_type lu/ilu -pc_factor_mat_solver_type petsc'
-  */
-  flg     = PETSC_FALSE;
-  flg_ilu = PETSC_FALSE;
-  PetscCall(PetscOptionsGetBool(NULL, NULL, "-use_petsc_lu", &flg, NULL));
-  PetscCall(PetscOptionsGetBool(NULL, NULL, "-use_petsc_ilu", &flg_ilu, NULL));
-  if (flg || flg_ilu) {
-
-    PetscCall(KSPSetType(ksp, KSPPREONLY));
-    PetscCall(KSPGetPC(ksp, &pc));
-    if (flg) PetscCall(PCSetType(pc, PCLU));
-    else if (flg_ilu) PetscCall(PCSetType(pc, PCILU));
-    PetscCall(PCFactorSetMatSolverType(pc, MATSOLVERPETSC));
-    PetscCall(PCFactorSetUpMatSolverType(pc)); /* call MatGetFactor() to create F */
-
-  }
-
   PetscCall(KSPSetFromOptions(ksp));
 
   /* Get info from matrix factors */
@@ -295,7 +244,7 @@ int main(int argc, char **args)
   t_loc[2] = ((PetscReal) (t4-t3)) / CLOCKS_PER_SEC;
 
   /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-                      Solve the linear system
+                      Time stepping loop
      - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
   MPI_Request sqs, rqs;
   for (t = 0; t < nt; ++t) {
@@ -307,6 +256,7 @@ int main(int argc, char **args)
     t6 = clock();
     t_loc[3] += ((PetscReal) (t6-t5)) / CLOCKS_PER_SEC;
 
+    // Newton iteration loop
     for (iter = 0; iter < max_iter; ++iter) {
 
       if (verbose) PetscCall(PetscPrintf(PETSC_COMM_WORLD, "\n"));
@@ -469,6 +419,7 @@ int main(int argc, char **args)
 
   if (verbose) PetscCall(VecView(c, PETSC_VIEWER_STDOUT_WORLD));
 
+  // Timing details
   if (rank) {
     PetscCallMPI(MPI_Reduce(&t_loc, NULL, 9, MPI_DOUBLE, MPI_SUM, 0, PETSC_COMM_WORLD));
   } else {
@@ -508,12 +459,6 @@ int main(int argc, char **args)
   PetscCall(MatDestroy(&M));
   PetscCall(MatDestroy(&K));
 
-  /*
-     Always call PetscFinalize() before exiting a program.  This routine
-       - finalizes the PETSc libraries as well as MPI
-       - provides summary and diagnostic information if certain runtime
-         options are chosen (e.g., -log_view).
-  */
   PetscCall(PetscFinalize());
   return 0;
 }
